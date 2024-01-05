@@ -8,27 +8,37 @@ import {
 import LayoutMain from '../components/layout/LayoutMain.vue'
 import Error from '../views/Error.vue'
 import Home from '../views/Home.vue'
+import PokemonList from '../views/PokemonList.vue'
+import PokemonDetails from '../views/PokemonDetails.vue'
 
 const mainRoutes: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: '', // Empty path as it's relative to the parent route
     name: 'Home',
-    props: true,
     component: Home,
+  },
+  {
+    path: 'pokemon-list', // Adjusted path to be more descriptive
+    name: 'PokemonList',
+    component: PokemonList,
+  },
+  {
+    path: 'pokemon/:id', // Dynamic parameter for PokemonDetails
+    name: 'PokemonDetails',
+    component: PokemonDetails,
+    props: true, // To pass route params as props to the component
   },
 ]
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/error',
-    alias: '/:pathMatch(.*)*',
+    alias: '/:pathMatch(.*)*', // Error route and catch-all route
     name: 'Error',
-    props: true,
     component: Error,
   },
   {
     path: '/',
-    props: true,
     component: LayoutMain,
     children: mainRoutes,
   },

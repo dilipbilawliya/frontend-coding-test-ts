@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-gray-800 text-white">
+  <nav class="bg-gray-800 text-white relative z-9">
     <div class="mx-auto px-8">
       <div class="relative flex items-center justify-between h-16">
         <div
@@ -16,6 +16,14 @@
                 class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                 exact-active-class="bg-gray-900 text-white"
                 >Home</router-link
+              >
+            </div>
+            <div class="flex space-x-4">
+              <router-link
+                to="/pokemon-list"
+                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                exact-active-class="bg-gray-900 text-white"
+                >Pokemons</router-link
               >
             </div>
           </div>
