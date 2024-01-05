@@ -47,61 +47,75 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        pokemons: [],
-        currentPage: 1,
-        itemsPerPage: 20,
-        totalPokemons: 0,
+import  { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
+export default {
+ setup() {
+  toast('Welcome to pokemon world',{
+  autoClose:1000});
+  },
+  data() {
+    return {
+      pokemons: [],
+      currentPage: 1,
+      itemsPerPage: 20,
+      totalPokemons: 0,
+    }
+  },
+  mounted() {
+    this.fetchPokemons()
+  },
+  computed: {
+    paginatedPokemons() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage
+      const endIndex = startIndex + this.itemsPerPage
+      return this.pokemons.slice(startIndex, endIndex)
+    },
+    totalPages() {
+      return Math.ceil(this.totalPokemons / this.itemsPerPage)
+    },
+  },
+  methods: {
+    async fetchPokemons(offset) {
+      try {
+        const response = await fetch(
+          `https://pokeapi.co/api/v2/pokemon/?limit=${this.itemsPerPage}&offset=${offset}`,
+        )
+        const data = await response.json()
+        this.pokemons.push(...data.results)
+        this.totalPokemons = data.count
+        toast.success('Data fetched!', {
+          timeout: 1000,
+          position: 'top-right',
+        })
+      } catch (error) {
+        console.error('Error fetching Pokémon:', error);
+         toast.error('Error occurred while fetching data', {
+          timeout: 1000,
+        });
       }
     },
-    mounted() {
-      this.fetchPokemons()
+    extractPokemonId(pokemonUrl) {
+      const id = pokemonUrl.split('/').slice(-2, -1)[0]
+      return id
     },
-    computed: {
-      paginatedPokemons() {
-        const startIndex = (this.currentPage - 1) * this.itemsPerPage
-        const endIndex = startIndex + this.itemsPerPage
-        return this.pokemons.slice(startIndex, endIndex)
-      },
-      totalPages() {
-        return Math.ceil(this.totalPokemons / this.itemsPerPage)
-      },
+    async nextPage() {
+      const offset = this.currentPage * this.itemsPerPage
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++
+        this.fetchPokemons(offset)
+      }
     },
-    methods: {
-      async fetchPokemons(offset) {
-        try {
-          const response = await fetch(
-            `https://pokeapi.co/api/v2/pokemon/?limit=${this.itemsPerPage}&offset=${offset}`,
-          )
-          const data = await response.json()
-          this.pokemons.push(...data.results) // Append fetched data to the array
-          this.totalPokemons = data.count
-        } catch (error) {
-          console.error('Error fetching Pokémon:', error)
-        }
-      },
-      extractPokemonId(pokemonUrl) {
-        const id = pokemonUrl.split('/').slice(-2, -1)[0]
-        return id
-      },
-      async nextPage() {
-        const offset = this.currentPage * this.itemsPerPage
-        if (this.currentPage < this.totalPages) {
-          this.currentPage++
-          this.fetchPokemons(offset)
-        }
-      },
-      async previousPage() {
-        if (this.currentPage > 1) {
-          const offset = (this.currentPage - 2) * this.itemsPerPage
-          this.currentPage--
-          this.fetchPokemons(offset)
-        }
-      },
+    async previousPage() {
+      if (this.currentPage > 1) {
+        const offset = (this.currentPage - 2) * this.itemsPerPage
+        this.currentPage--
+        this.fetchPokemons(offset)
+      }
     },
-  }
+  },
+}
 </script>
 
 <style>
@@ -133,7 +147,7 @@ main {
 
 .pokemon-card:hover {
   transform: scale(1.05);
-  transition: .5s ease;
+  transition: 0.5s ease;
   box-shadow: 0 2px 20px 8px #eaebed;
   background-color: #fff;
 }
@@ -148,7 +162,7 @@ main {
 }
 
 .pokemon-name {
-  font-size: 18px;  
+  font-size: 18px;
   font-weight: 400;
 }
 
@@ -227,7 +241,7 @@ main {
   padding: 15px 0;
 }
 
-.pokemon-wrapper h1 { 
+.pokemon-wrapper h1 {
   font-size: 28px;
   font-weight: 700;
   padding: 20px 0 30px;
@@ -238,5 +252,4 @@ main {
     flex: unset;
   }
 }
-
 </style>

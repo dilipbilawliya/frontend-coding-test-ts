@@ -39,6 +39,9 @@
 </template>
 
 <script>
+import  { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
   export default {
     data() {
       return {
@@ -55,8 +58,15 @@
           const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`);
           const data = await response.json();
           this.pokemon = data;
+          toast.success('Pokemon detailed fetched!', {
+          timeout: 1000,
+          position: 'top-right',
+        })
         } catch (error) {
           console.error('Error fetching Pokémon details:', error);
+          toast.error('Error occurred while fetching data', {
+          timeout: 1000,
+        });
         }
       }
     }
